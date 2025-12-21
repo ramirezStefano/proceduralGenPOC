@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Dungeon } from "../dungeon/Dungeon";
+import { Dungeon } from "../Dungeon/Dungeon";
 import { renderAscii } from "../render/asciiRenderer";
 
 export default function DungeonView() {
