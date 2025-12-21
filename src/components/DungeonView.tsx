@@ -4,7 +4,7 @@ import { renderAscii } from "../render/asciiRenderer";
 
 export default function DungeonView() {
   const [dungeon] = useState(() => {
-    const d = new Dungeon(70, 40, 12345);
+    const d = new Dungeon(70, 40, 1235);
     d.addRooms(12);
     d.connectRooms();
     return d;
