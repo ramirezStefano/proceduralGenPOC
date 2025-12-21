@@ -20,10 +20,10 @@ jobs:
           node-version: "20.19.0"
 
       - name: Install dependencies 📦
-        run: yarn install
+        run: pnpm install
 
       - name: Build ⚒
-        run: yarn build
+        run: pnpm build
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
