@@ -1,5 +1,5 @@
-import { RNG } from "./rng";
-import type { Tile, Room, Entity } from "./types";
+import { RNG } from "./rng.ts";
+import type { Tile, Room, Entity } from "./types.ts";
 
 export class Dungeon {
   rng: RNG;
@@ -79,6 +79,33 @@ export class Dungeon {
       this.grid[ay][x] = "floor";
     for (let y = Math.min(ay, by); y <= Math.max(ay, by); y++)
       this.grid[y][bx] = "floor";
+  }
+
+  spawnPlayer() {
+    const start = this.rooms[0];
+    const x = Math.floor(start.x + start.w / 2);
+    const y = Math.floor(start.y + start.h / 2);
+  
+    this.entities.push({
+      id: "player",
+      x,
+      y,
+      char: "@",
+      type: "player",
+    });
+  }  
+
+  movePlayer(dx: number, dy: number) {
+    const player = this.entities.find(e => e.type === "player");
+    if (!player) return;
+  
+    const nx = player.x + dx;
+    const ny = player.y + dy;
+  
+    if (this.grid[ny]?.[nx] === "floor") {
+      player.x = nx;
+      player.y = ny;
+    }
   }
 
   spawnEntity(e: Entity) {
