@@ -30,4 +30,9 @@ export interface Entity {
   y: number;
   char: string;
   type: "player" | "enemy" | "item";
+
+  hp?: number;
+  maxHp?: number;
+  attack?: number;
 }
+
