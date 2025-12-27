@@ -92,8 +92,12 @@ export class Dungeon {
       y,
       char: "@",
       type: "player",
+      hp: 20,
+      maxHp: 20,
+      attack: 5,
     });
-  }  
+  }
+  
 
   movePlayer(dx: number, dy: number) {
     const player = this.entities.find(e => e.type === "player");
@@ -102,11 +106,21 @@ export class Dungeon {
     const nx = player.x + dx;
     const ny = player.y + dy;
   
+    const target = this.entities.find(
+      e => e.x === nx && e.y === ny && e.type === "enemy"
+    );
+  
+    if (target) {
+      this.attack(player, target);
+      return;
+    }
+  
     if (this.grid[ny]?.[nx] === "floor") {
       player.x = nx;
       player.y = ny;
     }
   }
+  
 
   spawnEntity(e: Entity) {
     if (this.grid[e.y][e.x] === "floor") {
@@ -126,7 +140,11 @@ export class Dungeon {
         y,
         char: "g",
         type: "enemy",
+        hp: 8,
+        maxHp: 8,
+        attack: 3,
       });
+      
     }
   }
 
@@ -169,9 +187,16 @@ export class Dungeon {
     return this.entities.some(e => e.x === x && e.y === y);
   }
   
-  tryMoveEnemy(enemy: any, dx: number, dy: number) {
+  tryMoveEnemy(enemy: Entity, dx: number, dy: number) {
     const nx = enemy.x + dx;
     const ny = enemy.y + dy;
+  
+    const player = this.entities.find(e => e.type === "player");
+  
+    if (player && player.x === nx && player.y === ny) {
+      this.attack(enemy, player);
+      return;
+    }
   
     if (
       this.grid[ny]?.[nx] === "floor" &&
@@ -183,6 +208,24 @@ export class Dungeon {
   }
   
   
+  attack(attacker: Entity, defender: Entity) {
+    if (!attacker.attack || defender.hp === undefined) return;
+  
+    defender.hp -= attacker.attack;
+  
+    if (defender.hp <= 0) {
+      this.killEntity(defender);
+    }
+  }
+
+  killEntity(entity: Entity) {
+    this.entities = this.entities.filter(e => e !== entity);
+  }  
+
+  isGameOver() {
+    const player = this.entities.find(e => e.type === "player");
+    return !player || (player.hp ?? 0) <= 0;
+  }
   
 
   computeFOV(px: number, py: number, radius = 8) {

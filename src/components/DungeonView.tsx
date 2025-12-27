@@ -52,8 +52,18 @@ export default function DungeonView() {
     return () => window.removeEventListener("keydown", onKey);
   }, [dungeon]);
 
+  const player = dungeon.entities.find(e => e.type === "player");
+
+{player && (
+  <div style={{ marginBottom: "0.5rem" }}>
+    ❤️ HP: {player.hp}/{player.maxHp}
+  </div>
+)}
+
+
 
   return (
+    
     <pre
       id="dungeon"
       style={{
