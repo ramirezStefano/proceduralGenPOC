@@ -4,12 +4,14 @@ import { renderAscii } from "../render/asciiRenderer";
 
 export default function DungeonView() {
   const [dungeon] = useState(() => {
-    const d = new Dungeon(70, 40, Math.random()*10000);
+    const d = new Dungeon(70, 40, 12345);
     d.addRooms(12);
     d.connectRooms();
     d.spawnPlayer();
+    d.spawnEnemies(8);
     return d;
   });
+  
 
   const rerender = () => {
     const el = document.getElementById("dungeon");
@@ -26,19 +28,19 @@ export default function DungeonView() {
       switch (e.key) {
         case "ArrowUp":
         case "w":
-          dungeon.movePlayer(0, -1);
+          dungeon.takeTurn(0, -1);
           break;
         case "ArrowDown":
         case "s":
-          dungeon.movePlayer(0, 1);
+          dungeon.takeTurn(0, 1);
           break;
         case "ArrowLeft":
         case "a":
-          dungeon.movePlayer(-1, 0);
+          dungeon.takeTurn(-1, 0);
           break;
         case "ArrowRight":
         case "d":
-          dungeon.movePlayer(1, 0);
+          dungeon.takeTurn(1, 0);
           break;
         default:
           return;
