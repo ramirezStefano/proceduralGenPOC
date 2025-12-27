@@ -114,6 +114,77 @@ export class Dungeon {
     }
   }
 
+  spawnEnemies(count = 6) {
+    for (let i = 0; i < count; i++) {
+      const room = this.rooms[this.randomInt(1, this.rooms.length - 1)];
+      const x = this.randomInt(room.x + 1, room.x + room.w - 2);
+      const y = this.randomInt(room.y + 1, room.y + room.h - 2);
+  
+      this.entities.push({
+        id: `enemy-${i}`,
+        x,
+        y,
+        char: "g",
+        type: "enemy",
+      });
+    }
+  }
+
+  takeTurn(dx: number, dy: number) {
+    this.movePlayer(dx, dy);
+    this.enemyTurn();
+  }
+
+  enemyTurn() {
+    const player = this.entities.find(e => e.type === "player");
+    if (!player) return;
+  
+    for (const enemy of this.entities.filter(e => e.type === "enemy")) {
+      const dx = player.x - enemy.x;
+      const dy = player.y - enemy.y;
+      const dist = Math.abs(dx) + Math.abs(dy);
+  
+      // Chase if close
+      if (dist <= 6) {
+        const stepX = Math.sign(dx);
+        const stepY = Math.sign(dy);
+  
+        this.tryMoveEnemy(enemy, stepX, stepY);
+      } else {
+        // Wander randomly
+        const dir = this.randomInt(0, 3);
+        const moves = [
+          [1, 0],
+          [-1, 0],
+          [0, 1],
+          [0, -1],
+        ];
+        const [mx, my] = moves[dir];
+        this.tryMoveEnemy(enemy, mx, my);
+      }
+    }
+  }
+
+  isOccupied(x: number, y: number) {
+    return this.entities.some(e => e.x === x && e.y === y);
+  }
+  
+  tryMoveEnemy(enemy: any, dx: number, dy: number) {
+    const nx = enemy.x + dx;
+    const ny = enemy.y + dy;
+  
+    if (
+      this.grid[ny]?.[nx] === "floor" &&
+      !this.isOccupied(nx, ny)
+    ) {
+      enemy.x = nx;
+      enemy.y = ny;
+    }
+  }
+  
+  
+  
+
   computeFOV(px: number, py: number, radius = 8) {
     for (let y = py - radius; y <= py + radius; y++) {
       for (let x = px - radius; x <= px + radius; x++) {
